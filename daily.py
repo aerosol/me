@@ -7,7 +7,7 @@ from garminconnect import (
     GarminConnectAuthenticationError,
 )
 
-from datetime import date
+from datetime import date, timedelta
 
 import json
 import logging
@@ -19,7 +19,10 @@ logging.basicConfig(level=logging.DEBUG)
 if len(sys.argv) == 1:
     isodate = date.today().isoformat()
 elif len(sys.argv) == 2:
-    isodate = sys.argv[1]
+    if sys.argv[1] == 'yesterday':
+        isodate = (date.today() - timedelta(1)).isoformat()
+    else:
+        isodate = sys.argv[1]
 
 os.makedirs(isodate, exist_ok=True)
 
