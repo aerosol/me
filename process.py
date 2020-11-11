@@ -71,7 +71,7 @@ daily_sleep_data = concat_objects([s['dailySleepDTO'] for s in sleep_data])
 heart = load_all(datasets['heart'])
 heart_rates = flatten([s['heartRateValues'] for s in heart])
 heart_rates = [
-        {'timestamp': h[0], 'rate': h[1], 'id': h[0]} 
+        {'timestamp': h[0] // 1000, 'rate': h[1], 'id': h[0] // 1000} 
         for h in heart_rates if h[1] is not None
         ]
 
