@@ -44,7 +44,7 @@ heart = client.get_heart_rates(isodate)
 with open('%s/heart.dat' % isodate, 'w') as outfile:
     json.dump(heart, outfile, sort_keys=True, indent=4)
 
-activities = client.get_activities(0,10) 
+activities = client.get_activities(8,30) 
 for activity in activities:
         activity_id = activity["activityId"]
         csv_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.CSV)
