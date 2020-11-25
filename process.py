@@ -11,7 +11,8 @@ import itertools
 import time, datetime
 
 def to_unix(s):
-  return int(time.mktime(datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%S.0").timetuple()))
+  return int(time.mktime(datetime.datetime.strptime(s,
+      "%Y-%m-%dT%H:%M:%S.0").timetuple())) + 3600
 
 def load_all(files):
     contents = []
@@ -38,7 +39,7 @@ for filename in glob.iglob('2020-*/*.dat', recursive=True):
 steps = flatten(load_all(datasets['steps']))
 steps = list(
         map(
-            lambda x: x.setdefault('id', to_unix(x['startGMT'])) and x, 
+            lambda x: x.setdefault('id', to_unix(x['endGMT'])) and x, 
             steps))
 
 sleep_data = load_all(datasets['sleep'])
