@@ -25,6 +25,7 @@ elif len(sys.argv) == 2:
         isodate = sys.argv[1]
 
 os.makedirs(isodate, exist_ok=True)
+os.makedirs('_activities', exist_ok=True)
 
 email = os.environ['GARMIN_EMAIL']
 password = os.environ['GARMIN_PASS']
@@ -55,7 +56,7 @@ def dump_activities():
                     las+=1
                     activity_id = activity["activityId"]
                     csv_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.CSV)
-                    output_file = f"%s/activity_{str(activity_id)}.csv" % isodate
+                    output_file = f"_activities/activity_{str(activity_id)}.csv"
                     with open(output_file, "wb") as fb:
                       fb.write(csv_data)
 
