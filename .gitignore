@@ -1,3 +1,4 @@
 *.csv
 *.dat
 *.png
+last_activity_seq.txt
