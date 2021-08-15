@@ -56,9 +56,29 @@ def dump_activities():
                     las+=1
                     activity_id = activity["activityId"]
                     csv_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.CSV)
+
                     output_file = f"_activities/activity_{str(activity_id)}.csv"
                     with open(output_file, "wb") as fb:
-                      fb.write(csv_data)
+                        fb.write(csv_data)
+
+                    output_file = f"_activities/activity_{str(activity_id)}.json"
+                    with open(output_file, "w", encoding="utf8") as fb:
+                        json.dump(activity, fb, sort_keys=True, indent=4)
+
+                    zip_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.ORIGINAL)
+                    output_file = f"_activities/activity_{str(activity_id)}.zip"
+                    with open(output_file, "wb") as fb:
+                        fb.write(zip_data)
+
+                    gpx_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.GPX)
+                    output_file = f"_activities/activity_{str(activity_id)}.gpx"
+                    with open(output_file, "wb") as fb:
+                        fb.write(gpx_data)
+
+                    tcx_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.TCX)
+                    output_file = f"_activities/activity_{str(activity_id)}.tcx"
+                    with open(output_file, "wb") as fb:
+                        fb.write(tcx_data)
 
             lasf.seek(0)
             lasf.write(str(las))
