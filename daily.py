@@ -46,44 +46,34 @@ with open('%s/heart.dat' % isodate, 'w') as outfile:
     json.dump(heart, outfile, sort_keys=True, indent=4)
 
 def dump_activities():
-    with open('last_activity_seq.txt', 'r+') as lasf:
-        las = int(lasf.read().strip())
-        last_activity_seq = las
+    activities = client.get_activities(0, 10) 
+    if activities:
+        for activity in activities:
+            activity_id = activity["activityId"]
+            csv_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.CSV)
 
-        activities = client.get_activities(last_activity_seq, last_activity_seq + 10) 
-        if activities:
-            for activity in activities:
-                    las+=1
-                    activity_id = activity["activityId"]
-                    csv_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.CSV)
+            output_file = f"_activities/activity_{str(activity_id)}.csv"
+            with open(output_file, "wb") as fb:
+                fb.write(csv_data)
 
-                    output_file = f"_activities/activity_{str(activity_id)}.csv"
-                    with open(output_file, "wb") as fb:
-                        fb.write(csv_data)
+            output_file = f"_activities/activity_{str(activity_id)}.json"
+            with open(output_file, "w", encoding="utf8") as fb:
+                json.dump(activity, fb, sort_keys=True, indent=4)
 
-                    output_file = f"_activities/activity_{str(activity_id)}.json"
-                    with open(output_file, "w", encoding="utf8") as fb:
-                        json.dump(activity, fb, sort_keys=True, indent=4)
+            zip_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.ORIGINAL)
+            output_file = f"_activities/activity_{str(activity_id)}.zip"
+            with open(output_file, "wb") as fb:
+                fb.write(zip_data)
 
-                    zip_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.ORIGINAL)
-                    output_file = f"_activities/activity_{str(activity_id)}.zip"
-                    with open(output_file, "wb") as fb:
-                        fb.write(zip_data)
+            gpx_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.GPX)
+            output_file = f"_activities/activity_{str(activity_id)}.gpx"
+            with open(output_file, "wb") as fb:
+                fb.write(gpx_data)
 
-                    gpx_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.GPX)
-                    output_file = f"_activities/activity_{str(activity_id)}.gpx"
-                    with open(output_file, "wb") as fb:
-                        fb.write(gpx_data)
-
-                    tcx_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.TCX)
-                    output_file = f"_activities/activity_{str(activity_id)}.tcx"
-                    with open(output_file, "wb") as fb:
-                        fb.write(tcx_data)
-
-            lasf.seek(0)
-            lasf.write(str(las))
-            lasf.truncate()
-            dump_activities()
+            tcx_data = client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.TCX)
+            output_file = f"_activities/activity_{str(activity_id)}.tcx"
+            with open(output_file, "wb") as fb:
+                fb.write(tcx_data)
 
 dump_activities()
 
