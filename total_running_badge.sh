@@ -11,8 +11,8 @@ cat > $BADGE << EOF
 
 </g>
 
-<text y="50" font-size="2em" font-family="Helvetica, Arial, sans-serif">
-$DISTANCE km
+<text y="500" x="40" font-size="1.5em" font-family="Helvetica, Arial, sans-serif">
+Total running distance so far: $DISTANCE km
 </text>
 </svg>
  
