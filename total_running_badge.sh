@@ -11,7 +11,7 @@ cat > $BADGE << EOF
 </g>
 
 <text y="50" font-size="2em" font-family="Helvetica, Arial, sans-serif">
-$DISTANCE km
+$DISTANCE m
 </text>
 </svg>
  
