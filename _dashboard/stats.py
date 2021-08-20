@@ -58,7 +58,8 @@ def svg_hr(activity):
         ts = 10
         for row in data['heartRateValues']:
             ts += 1
-            pm = 200 - row[1]
+            bpm = row[1] or 200
+            pm = 200 - bpm
             beats.append(','.join([str(ts), str(pm)]))
 
     svg = """
