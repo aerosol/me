@@ -154,7 +154,7 @@ base_html = """
 </head>
 <body>
 
-  <img class="w-36" src="dist/fig1.svg"/>
+  <img class="w-48 lg:w-96" src="dist/fig1.svg"/>
 
   ${groups}
 
@@ -177,7 +177,7 @@ group_html = """
   <div class="flex items-stretch">
     <h1 class="w-48 lg:text-4xl lg:w-96 bg-black text-white inline p-8 font-bold">${caption}</h1>
     <div class="max-w-7xl w-full mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="grid lg:grid-cols-2 sm:grid-cols-1 gap-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
             ${components}
         </div>
     </div>
