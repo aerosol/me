@@ -24,6 +24,43 @@ def summary_this_year(activities, activity_type, field):
         CURRENT_YEAR)]
     return summary(this_year, activity_type, field)
 
+def distinct_active_days(activities):
+    return len(set([a['startTimeGMT'][0:10] for a in activities]))
+
+def most_recent(activities, activity_type):
+    return [a for a in sorted(activities, key=lambda x: x['activityId']) if a['activityType']['typeKey'] ==
+            activity_type][-1]
+
+def svg_gpx(activity):
+    return '<img class="w-32 md:w-36 lg:w-48" src="dist/_activities-svg/activity_%s.gpx.svg"/>' % activity['activityId']
+
+def svg_hr(activity):
+    ts = activity['startTimeGMT'][0:10]
+
+    with open("../%s/heart.dat" % ts) as json_file:
+        data = json.load(json_file)
+        beats = []
+        ts = 10
+        for row in data['heartRateValues']:
+            ts += 1
+            bpm = row[1] or 200
+            pm = 200 - bpm
+            beats.append(','.join([str(ts), str(pm)]))
+
+    svg = """
+    <svg class="w-32 md:w-36 lg:w-48" viewBox="0 0 500 200" class="chart">
+      <polyline
+         fill="none"
+         stroke="#000000"
+         stroke-width="1"
+         points="
+         %s
+         "/>
+    </svg>
+    """ % ('\n'.join(beats))
+
+    return svg
+
 distance_running = summary(activities, 'running', 'distance') / 1000
 distance_walking = summary(activities, 'walking', 'distance') / 1000
 distance_cycling = summary(activities, 'cycling', 'distance') / 1000
@@ -42,41 +79,29 @@ duration_walking_this_year = summary_this_year(activities, 'walking', 'duration'
 duration_cycling_this_year = summary_this_year(activities, 'cycling', 'duration') / 3600
 duration_strength_this_year = summary_this_year(activities, 'indoor_cardio', 'duration') / 3600
 
-def most_recent(activities, activity_type):
-    return [a for a in sorted(activities, key=lambda x: x['activityId']) if a['activityType']['typeKey'] ==
-            activity_type][-1]
+duration_all_this_year = duration_running_this_year + duration_walking_this_year + duration_cycling_this_year + duration_strength_this_year 
 
-def svg_gpx(activity):
-    return '<img src="dist/_activities-svg/activity_%s.gpx.svg"/>' % activity['activityId']
+distance_all_this_year = distance_walking_this_year + distance_cycling_this_year + distance_running_this_year
 
-def svg_hr(activity):
-    ts = activity['startTimeGMT'][0:10]
+duration_all = duration_running + duration_walking + duration_cycling + duration_strength 
 
-    with open("../%s/heart.dat" % ts) as json_file:
-        data = json.load(json_file)
-        beats = []
-        ts = 10
-        for row in data['heartRateValues']:
-            ts += 1
-            bpm = row[1] or 200
-            pm = 200 - bpm
-            beats.append(','.join([str(ts), str(pm)]))
+distance_all = distance_walking + distance_cycling + distance_running
 
-    svg = """
-    <svg viewBox="0 0 500 200" class="chart">
-      <polyline
-         fill="none"
-         stroke="#000000"
-         stroke-width="1"
-         points="
-         %s
-         "/>
-    </svg>
-    """ % ('\n'.join(beats))
-
-    return svg
+active_days = distinct_active_days(activities)
+d0 = date(CURRENT_YEAR, 1, 1)
+d1 = date.today()
+days_this_year = (d1 - d0).days
+percentage_active_days = (active_days * 100) / days_this_year
 
 component_groups = [
+        {'name': 'Activities', 'components': [
+            {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%d km' % distance_all_this_year},
+            {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % duration_all_this_year},
+            {'label': 'Distance (total)', 'value': '%d km' % distance_all},
+            {'label': 'Duration (total)', 'value': '%d h' % duration_all},
+            {'label': 'Active days (%d)' % CURRENT_YEAR, 'value': '%d / %d (%d %%)' %
+                (active_days, days_this_year, percentage_active_days)}
+            ]},
         {'name': 'Running', 'components': [
         {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%d km' % (distance_running_this_year )},
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_running_this_year)},
@@ -129,12 +154,15 @@ base_html = """
 </head>
 <body>
 
-  <img src="dist/fig1.svg"/>
+  <img class="w-36" src="dist/fig1.svg"/>
 
   ${groups}
 
   <footer class="p-8 bg-black text-white">
-    <p class="font-mono text-xs">code &amp; data: <a class="underline" href="https://mtod.org">hq1</a> // symbol: Bartek Biernacki</p>
+    <p class="font-mono text-xs"><a href="https://github.com/aerosol/me"
+    class="underline">code</a> &amp; 
+    data: <a class="underline" href="https://twitter.com/itshq1">hq1</a> 
+    | symbol: <a href="https://twitter.com/Biernacki" class="underline">Bartek Biernacki</a></p>
     <p class="font-mono text-xs">Built with: 
     <a class="underline" href="https://tailwindcss.com/">tailwindcss</a> (MIT), 
     <a class="underline" href="https://gitlab.com/l3u/gpx2svg/">gpx2svg</a> (GPL3), 
@@ -149,7 +177,7 @@ group_html = """
   <div class="flex items-stretch">
     <h1 class="w-48 lg:text-4xl lg:w-96 bg-black text-white inline p-8 font-bold">${caption}</h1>
     <div class="max-w-7xl w-full mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid lg:grid-cols-2 sm:grid-cols-1 gap-2">
             ${components}
         </div>
     </div>
