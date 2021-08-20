@@ -147,7 +147,7 @@ base_html = """
 
 group_html = """
   <div class="flex items-stretch">
-    <h1 class="lg:text-4xl lg:w-96 bg-black text-white inline p-8 font-bold">${caption}</h1>
+    <h1 class="w-48 lg:text-4xl lg:w-96 bg-black text-white inline p-8 font-bold">${caption}</h1>
     <div class="max-w-7xl w-full mx-auto py-6 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 gap-2">
             ${components}
@@ -158,7 +158,7 @@ group_html = """
 """
 
 component_html = """
-            <div class="w-full">
+            <div class="w-full pr-4">
                 <div class="widget w-full p-4 rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800 align-middle">
                     <div class="flex flex-row items-stretch">
                         <div class="flex flex-col items-stretch">
