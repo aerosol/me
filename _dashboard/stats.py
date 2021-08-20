@@ -52,7 +52,7 @@ def svg_gpx(activity):
 def svg_hr(activity):
     ts = activity['startTimeGMT'][0:10]
 
-    with open("%s/heart.dat" % ts) as json_file:
+    with open("../%s/heart.dat" % ts) as json_file:
         data = json.load(json_file)
         beats = []
         ts = 10
