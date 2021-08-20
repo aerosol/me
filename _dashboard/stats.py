@@ -129,6 +129,8 @@ base_html = """
 </head>
 <body>
 
+  <img src="dist/fig1.svg"/>
+
   ${groups}
 
 </body>
