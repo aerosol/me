@@ -16,6 +16,9 @@ for name in glob.glob('../_activities/*.json'):
         obj = json.loads(activity.read())
         activities.append(obj)
 
+def maximum(activities, activity_type, field):
+    return max(a[field] for a in activities if a['activityType']['typeKey'] == activity_type and a[field] is not None)
+
 def summary(activities, activity_type, field):
     return sum(a[field] for a in activities if a['activityType']['typeKey'] == activity_type)
 
@@ -32,7 +35,38 @@ def most_recent(activities, activity_type):
             activity_type][-1]
 
 def svg_gpx(activity):
-    return '<img class="w-2/3" src="dist/_activities-svg/activity_%s.gpx.svg"/>' % activity['activityId']
+    return '<img class="w-3/4" src="dist/_activities-svg/activity_%s.gpx.svg"/>' % activity['activityId']
+
+def vo2_max_widget(activities):
+    max_vo2_max = str(maximum(activities, 'running', 'vO2MaxValue'))
+    current = str(most_recent(activities, 'running')['vO2MaxValue'])
+    svg = svg_vo2max(activities)
+    html = """
+    <span class="text-xs">
+    <span class="text-gray-500 font-normal mr-4">Peak: <span class="text-black font-bold">%s</span></span>
+    <span class="text-gray-500 font-normal">Current: <span class="text-black font-bold">%s</span></span>
+    </span>
+    %s
+    """ % (max_vo2_max, current, svg)
+    return html
+
+
+def svg_vo2max(activities):
+    history = []
+    ts = 0
+    values = [a['vO2MaxValue'] for a in sorted(activities, key=lambda x: x['activityId']) if a['startTimeGMT'].startswith('%d' % CURRENT_YEAR)]
+    for value in values:
+        if value is not None:
+            history.append(','.join([str(ts), str(200 - (value * 4))]))
+            ts += 1
+
+    svg = """
+    <svg class="w-full" viewBox="0 0 200 50" class="chart">
+      <polyline fill="none" stroke="#000000" stroke-width="1" points="%s"/>
+    </svg>
+    """ % ('\n'.join(history))
+    return svg
+
 
 def svg_hr(activity):
     ts = activity['startTimeGMT'][0:10]
@@ -40,7 +74,7 @@ def svg_hr(activity):
     with open("../%s/heart.dat" % ts) as json_file:
         data = json.load(json_file)
         beats = []
-        ts = 10
+        ts = 0
         for row in data['heartRateValues']:
             ts += 1
             bpm = row[1] or 200
@@ -49,13 +83,7 @@ def svg_hr(activity):
 
     svg = """
     <svg class="w-full" viewBox="0 0 500 200" class="chart">
-      <polyline
-         fill="none"
-         stroke="#000000"
-         stroke-width="1"
-         points="
-         %s
-         "/>
+      <polyline fill="none" stroke="#000000" stroke-width="2" points="%s"/>
     </svg>
     """ % ('\n'.join(beats))
 
@@ -95,22 +123,24 @@ percentage_active_days = (active_days * 100) / days_this_year
 
 component_groups = [
         {'name': 'activities', 'components': [
-            {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%d km' % distance_all_this_year},
+            {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%.2f km' % distance_all_this_year},
             {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % duration_all_this_year},
-            {'label': 'Distance (total)', 'value': '%d km' % distance_all},
+            {'label': 'Distance (total)', 'value': '%.2f km' % distance_all},
             {'label': 'Duration (total)', 'value': '%d h' % duration_all},
             {'label': 'Active days (%d)' % CURRENT_YEAR, 'value': '%d / %d (%d %%)' %
-                (active_days, days_this_year, percentage_active_days)}
+                (active_days, days_this_year, percentage_active_days)},
+            {'label': 'VO2Max (%d)' % CURRENT_YEAR, 'value': vo2_max_widget(activities)}
             ]},
         {'name': 'running', 'components': [
-        {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%d km' % (distance_running_this_year )},
+        {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%.2f km' % (distance_running_this_year )},
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_running_this_year)},
-        {'label': 'Distance (total)', 'value': '%d km' % (distance_running)},
+        {'label': 'Distance (total)', 'value': '%.2f km' % (distance_running)},
         {'label': 'Duration (total)', 'value': '%d h' % (duration_running)},
         {'label': 'Last HR', 'value': svg_hr(most_recent(activities,
             'running'))},
         {'label': 'Last track', 'value': svg_gpx(most_recent(activities,
-            'running'))}
+            'running'))},
+        {'label': 'Longest run', 'value': '%.2f km' % (maximum(activities, 'running', 'distance') / 1000.00)}
 
         ]},
 
@@ -122,9 +152,9 @@ component_groups = [
         ]},
 
         {'name': 'cycling', 'components': [
-        {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%d km' % (distance_cycling_this_year )},
+        {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%.2f km' % (distance_cycling_this_year )},
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_cycling_this_year)},
-        {'label': 'Distance (total)', 'value': '%d km' % (distance_cycling)},
+        {'label': 'Distance (total)', 'value': '%.2f km' % (distance_cycling)},
         {'label': 'Duration (total)', 'value': '%d h' % (duration_cycling)},
         {'label': 'Last HR', 'value': svg_hr(most_recent(activities,
             'cycling'))},
@@ -133,9 +163,9 @@ component_groups = [
         ]},
 
         {'name': 'walking', 'components': [
-        {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%d km' % (distance_walking_this_year )},
+        {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%.2f km' % (distance_walking_this_year )},
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_walking_this_year)},
-        {'label': 'Distance (total)', 'value': '%d km' % (distance_walking)},
+        {'label': 'Distance (total)', 'value': '%.2f km' % (distance_walking)},
         {'label': 'Duration (total)', 'value': '%d h' % (duration_walking)},
         {'label': 'Last HR', 'value': svg_hr(most_recent(activities,
             'walking'))},
