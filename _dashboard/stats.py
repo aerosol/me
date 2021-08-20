@@ -147,7 +147,7 @@ base_html = """
 
 group_html = """
   <div class="flex items-stretch">
-    <h1 class="text-4xl w-96 bg-black text-white inline p-8 font-bold">${caption}</h1>
+    <h1 class="lg:text-4xl lg:w-96 bg-black text-white inline p-8 font-bold">${caption}</h1>
     <div class="max-w-7xl w-full mx-auto py-6 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 gap-2">
             ${components}
