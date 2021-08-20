@@ -133,6 +133,14 @@ base_html = """
 
   ${groups}
 
+  <footer class="p-8 bg-black text-white">
+    <p class="font-mono text-xs">code &amp; data: <a class="underline" href="https://mtod.org">hq1</a> // symbol: Bartek Biernacki</p>
+    <p class="font-mono text-xs">Built with: 
+    <a class="underline" href="https://tailwindcss.com/">tailwindcss</a> (MIT), 
+    <a class="underline" href="https://gitlab.com/l3u/gpx2svg/">gpx2svg</a> (GPL3), 
+    <a class="underline" href="https://github.com/cyberjunky/python-garminconnect">garminconnect</a> (MIT)</p>
+  </footer>
+
 </body>
 </html>
 """
