@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-         'sans': 'Playfair Display'
+         'sans': ['Inter', 'sans-serif']
       }
     }
   },

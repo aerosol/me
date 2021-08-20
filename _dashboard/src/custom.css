@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+@import url('https://rsms.me/inter/inter.css');
 
 @tailwind base;
 @tailwind components;
@@ -8,4 +8,8 @@
   .btn {
     @apply px-4 py-2 bg-red-600 text-white rounded;
   }
+}
+
+@supports (font-variation-settings: normal) {
+  html { font-family: 'Inter var', sans-serif; }
 }

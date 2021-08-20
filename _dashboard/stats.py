@@ -32,7 +32,7 @@ def most_recent(activities, activity_type):
             activity_type][-1]
 
 def svg_gpx(activity):
-    return '<img class="w-32 md:w-36 lg:w-48" src="dist/_activities-svg/activity_%s.gpx.svg"/>' % activity['activityId']
+    return '<img class="w-2/3" src="dist/_activities-svg/activity_%s.gpx.svg"/>' % activity['activityId']
 
 def svg_hr(activity):
     ts = activity['startTimeGMT'][0:10]
@@ -48,7 +48,7 @@ def svg_hr(activity):
             beats.append(','.join([str(ts), str(pm)]))
 
     svg = """
-    <svg class="w-32 md:w-36 lg:w-48" viewBox="0 0 500 200" class="chart">
+    <svg class="w-full" viewBox="0 0 500 200" class="chart">
       <polyline
          fill="none"
          stroke="#000000"
@@ -94,7 +94,7 @@ days_this_year = (d1 - d0).days
 percentage_active_days = (active_days * 100) / days_this_year
 
 component_groups = [
-        {'name': 'Activities', 'components': [
+        {'name': 'activities', 'components': [
             {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%d km' % distance_all_this_year},
             {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % duration_all_this_year},
             {'label': 'Distance (total)', 'value': '%d km' % distance_all},
@@ -102,7 +102,7 @@ component_groups = [
             {'label': 'Active days (%d)' % CURRENT_YEAR, 'value': '%d / %d (%d %%)' %
                 (active_days, days_this_year, percentage_active_days)}
             ]},
-        {'name': 'Running', 'components': [
+        {'name': 'running', 'components': [
         {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%d km' % (distance_running_this_year )},
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_running_this_year)},
         {'label': 'Distance (total)', 'value': '%d km' % (distance_running)},
@@ -114,14 +114,14 @@ component_groups = [
 
         ]},
 
-        {'name': 'Strength', 'components': [
+        {'name': 'strength', 'components': [
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_strength_this_year)},
         {'label': 'Duration (total)', 'value': '%d h' % (duration_strength)},
         {'label': 'Last HR', 'value': svg_hr(most_recent(activities,
             'indoor_cardio'))},
         ]},
 
-        {'name': 'Cycling', 'components': [
+        {'name': 'cycling', 'components': [
         {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%d km' % (distance_cycling_this_year )},
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_cycling_this_year)},
         {'label': 'Distance (total)', 'value': '%d km' % (distance_cycling)},
@@ -132,7 +132,7 @@ component_groups = [
             'cycling'))}
         ]},
 
-        {'name': 'Walking', 'components': [
+        {'name': 'walking', 'components': [
         {'label': 'Distance (%d)' % CURRENT_YEAR, 'value': '%d km' % (distance_walking_this_year )},
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_walking_this_year)},
         {'label': 'Distance (total)', 'value': '%d km' % (distance_walking)},
@@ -154,16 +154,16 @@ base_html = """
 </head>
 <body>
 
-  <img class="w-48 lg:w-96" src="dist/fig1.svg"/>
+  <img class="w-36 max-w-48 lg:w-48 inline p-2 font-bold" src="dist/fig1.svg"/>
 
   ${groups}
 
-  <footer class="p-8 bg-black text-white">
-    <p class="font-mono text-xs"><a href="https://github.com/aerosol/me"
-    class="underline">code</a> &amp; 
+  <footer class="p-6 bg-black text-gray-300 border rounded">
+    <p class="text-xs"><a href="https://github.com/aerosol/me"
+    class="underline">Code</a> &amp; 
     data: <a class="underline" href="https://twitter.com/itshq1">hq1</a> 
-    | symbol: <a href="https://twitter.com/Biernacki" class="underline">Bartek Biernacki</a></p>
-    <p class="font-mono text-xs">Built with: 
+    | symbol: <a href="https://twitter.com/Biernacki" class="underline">Biernacki</a></p>
+    <p class="text-xs">Made with: 
     <a class="underline" href="https://tailwindcss.com/">tailwindcss</a> (MIT), 
     <a class="underline" href="https://gitlab.com/l3u/gpx2svg/">gpx2svg</a> (GPL3), 
     <a class="underline" href="https://github.com/cyberjunky/python-garminconnect">garminconnect</a> (MIT)</p>
@@ -175,8 +175,8 @@ base_html = """
 
 group_html = """
   <div class="flex items-stretch">
-    <h1 class="w-48 lg:text-4xl lg:w-96 bg-black text-white inline p-8 font-bold">${caption}</h1>
-    <div class="max-w-7xl w-full mx-auto py-6 sm:px-6 lg:px-8">
+    <h1 class="w-36 max-w-48 lg:w-48 bg-gray-100 rounded text-gray-500 inline m-2 p-2 font-bold text-center">${caption}</h1>
+    <div class="max-w-7xl w-full mx-auto py-6 px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
             ${components}
         </div>

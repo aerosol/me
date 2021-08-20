@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+@import url('https://rsms.me/inter/inter.css');
 
 /*! tailwindcss v2.2.7 | MIT License | https://tailwindcss.com */
 
@@ -375,7 +375,7 @@ ul {
  */
 
 html {
-  font-family: Playfair Display;
+  font-family: Inter, sans-serif;
   /* 1 */
   line-height: 1.5;
   /* 2 */
@@ -22371,7 +22371,7 @@ video {
 }
 
 .font-sans{
-  font-family: Playfair Display;
+  font-family: Inter, sans-serif;
 }
 
 .font-serif{
@@ -32244,6 +32244,12 @@ video {
 
 .content-none{
   content: none;
+}
+
+@supports (font-variation-settings: normal) {
+  html {
+    font-family: 'Inter var', sans-serif;
+  }
 }
 
 @media (min-width: 640px){
@@ -53950,7 +53956,7 @@ video {
   }
 
   .sm\:font-sans{
-    font-family: Playfair Display;
+    font-family: Inter, sans-serif;
   }
 
   .sm\:font-serif{
@@ -85177,7 +85183,7 @@ video {
   }
 
   .md\:font-sans{
-    font-family: Playfair Display;
+    font-family: Inter, sans-serif;
   }
 
   .md\:font-serif{
@@ -116404,7 +116410,7 @@ video {
   }
 
   .lg\:font-sans{
-    font-family: Playfair Display;
+    font-family: Inter, sans-serif;
   }
 
   .lg\:font-serif{
@@ -147631,7 +147637,7 @@ video {
   }
 
   .xl\:font-sans{
-    font-family: Playfair Display;
+    font-family: Inter, sans-serif;
   }
 
   .xl\:font-serif{
@@ -178858,7 +178864,7 @@ video {
   }
 
   .\32xl\:font-sans{
-    font-family: Playfair Display;
+    font-family: Inter, sans-serif;
   }
 
   .\32xl\:font-serif{
