@@ -42,9 +42,9 @@ def vo2_max_widget(activities):
     current = str(most_recent(activities, 'running')['vO2MaxValue'])
     svg = svg_vo2max(activities)
     html = """
-    <span class="text-xs">
-    <span class="text-gray-500 font-normal mr-4">Peak: <span class="text-black font-bold">%s</span></span>
-    <span class="text-gray-500 font-normal">Current: <span class="text-black font-bold">%s</span></span>
+    <span class="text-xs w-full">
+    <span class="text-gray-500 font-normal mr-2">Peak:&nbsp;<span class="text-black font-bold">%s</span></span>
+    <span class="text-gray-500 font-normal">Current:&nbsp;<span class="text-black font-bold">%s</span></span>
     </span>
     %s
     """ % (max_vo2_max, current, svg)
@@ -61,7 +61,7 @@ def svg_vo2max(activities):
             ts += 1
 
     svg = """
-    <svg class="w-full" viewBox="0 0 200 50" class="chart">
+    <svg class="w-full" viewBox="0 0 200 50">
       <polyline fill="none" stroke="#000000" stroke-width="1" points="%s"/>
     </svg>
     """ % ('\n'.join(history))
@@ -82,8 +82,8 @@ def svg_hr(activity):
             beats.append(','.join([str(ts), str(pm)]))
 
     svg = """
-    <svg class="w-full" viewBox="0 0 500 200" class="chart">
-      <polyline fill="none" stroke="#000000" stroke-width="2" points="%s"/>
+    <svg class="w-full" viewBox="0 0 500 200">
+      <polyline fill="none" stroke="#000000" stroke-width="1" points="%s"/>
     </svg>
     """ % ('\n'.join(beats))
 
@@ -127,7 +127,7 @@ component_groups = [
             {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % duration_all_this_year},
             {'label': 'Distance (total)', 'value': '%.2f km' % distance_all},
             {'label': 'Duration (total)', 'value': '%d h' % duration_all},
-            {'label': 'Active days (%d)' % CURRENT_YEAR, 'value': '%d / %d (%d %%)' %
+            {'label': 'Active days (%d)' % CURRENT_YEAR, 'value': '%d/%d (%d%%)' %
                 (active_days, days_this_year, percentage_active_days)},
             {'label': 'VO2Max (%d)' % CURRENT_YEAR, 'value': vo2_max_widget(activities)}
             ]},
@@ -206,7 +206,7 @@ base_html = """
 group_html = """
   <div class="flex items-stretch">
     <h1 class="w-36 max-w-48 lg:w-48 bg-gray-100 rounded text-gray-500 inline m-2 p-2 font-bold text-center">${caption}</h1>
-    <div class="max-w-7xl w-full mx-auto py-6 px-8">
+    <div class="max-w-7xl w-full mx-auto py-6 px-2">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
             ${components}
         </div>
