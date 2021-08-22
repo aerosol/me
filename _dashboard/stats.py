@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
+import dateutil.parser as dparser
+from datetime import timedelta
 import json
 import os
 import sys
@@ -35,7 +38,11 @@ def most_recent(activities, activity_type):
             activity_type][-1]
 
 def svg_gpx(activity):
-    return '<img class="w-3/4" src="dist/_activities-svg/activity_%s.gpx.svg"/>' % activity['activityId']
+    distance = activity['distance'] / 1000
+    return """
+    %.2f km<br/>
+    <img class="w-3/4" src="dist/_activities-svg/activity_%s.gpx.svg"/>
+    """ % (distance, activity['activityId'])
 
 def vo2_max_widget(activities):
     max_vo2_max = str(maximum(activities, 'running', 'vO2MaxValue'))
@@ -69,23 +76,38 @@ def svg_vo2max(activities):
 
 
 def svg_hr(activity):
+    activity_start_date = dparser.parse(activity['startTimeGMT'])
+    heart_ts_start = int((activity_start_date - timedelta(seconds=60) + timedelta(hours=1)).timestamp()) * 1000
+    heart_ts_end = int(heart_ts_start + (activity['duration']*1000) + (3600 * 3
+        * 1000))
+
     ts = activity['startTimeGMT'][0:10]
+
+    workout_width = 100
+    workout_x = 0
 
     with open("../%s/heart.dat" % ts) as json_file:
         data = json.load(json_file)
         beats = []
         ts = 0
         for row in data['heartRateValues']:
-            ts += 1
-            bpm = row[1] or 200
-            pm = 200 - bpm
-            beats.append(','.join([str(ts), str(pm)]))
+            if workout_x == 0 and row[0] >= (heart_ts_start + 3600000):
+                workout_x = ts
+                workout_width = int((activity['duration']+240)/60)
+
+            if int(row[0]) >= heart_ts_start and int(row[0]) <= heart_ts_end:
+                ts += 2
+
+                bpm = row[1] or 200
+                pm = 200 - bpm
+                beats.append(','.join([str(ts), str(pm)]))
 
     svg = """
-    <svg class="w-full" viewBox="0 0 500 200">
+    <svg class="w-full" viewBox="0 0 400 200">
+      <rect x="%s" width="%s" y="30" height="120" style="fill:rgb(237,249,255);stroke-width:0;" />
       <polyline fill="none" stroke="#000000" stroke-width="1" points="%s"/>
     </svg>
-    """ % ('\n'.join(beats))
+    """ % (workout_x, workout_width, '\n'.join(beats))
 
     return svg
 
@@ -136,7 +158,7 @@ component_groups = [
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_running_this_year)},
         {'label': 'Distance (total)', 'value': '%.2f km' % (distance_running)},
         {'label': 'Duration (total)', 'value': '%d h' % (duration_running)},
-        {'label': 'Last HR', 'value': svg_hr(most_recent(activities,
+        {'label': 'Last run HR', 'value': svg_hr(most_recent(activities,
             'running'))},
         {'label': 'Last track', 'value': svg_gpx(most_recent(activities,
             'running'))},
@@ -147,7 +169,7 @@ component_groups = [
         {'name': 'strength', 'components': [
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_strength_this_year)},
         {'label': 'Duration (total)', 'value': '%d h' % (duration_strength)},
-        {'label': 'Last HR', 'value': svg_hr(most_recent(activities,
+        {'label': 'Last workout HR', 'value': svg_hr(most_recent(activities,
             'indoor_cardio'))},
         ]},
 
@@ -156,7 +178,7 @@ component_groups = [
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_cycling_this_year)},
         {'label': 'Distance (total)', 'value': '%.2f km' % (distance_cycling)},
         {'label': 'Duration (total)', 'value': '%d h' % (duration_cycling)},
-        {'label': 'Last HR', 'value': svg_hr(most_recent(activities,
+        {'label': 'Last cycle HR', 'value': svg_hr(most_recent(activities,
             'cycling'))},
         {'label': 'Last track', 'value': svg_gpx(most_recent(activities,
             'cycling'))}
@@ -167,7 +189,7 @@ component_groups = [
         {'label': 'Duration (%d)' % CURRENT_YEAR, 'value': '%d h' % (duration_walking_this_year)},
         {'label': 'Distance (total)', 'value': '%.2f km' % (distance_walking)},
         {'label': 'Duration (total)', 'value': '%d h' % (duration_walking)},
-        {'label': 'Last HR', 'value': svg_hr(most_recent(activities,
+        {'label': 'Last walk HR', 'value': svg_hr(most_recent(activities,
             'walking'))},
         {'label': 'Last track', 'value': svg_gpx(most_recent(activities,
             'walking'))}
