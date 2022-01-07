@@ -140,7 +140,7 @@ distance_all = distance_walking + distance_cycling + distance_running
 active_days = distinct_active_days(activities)
 d0 = date(CURRENT_YEAR, 1, 1)
 d1 = date.today()
-days_this_year = (d1 - d0).days
+days_this_year = (d1 - d0).days + 1
 percentage_active_days = (active_days * 100) / days_this_year
 
 component_groups = [
