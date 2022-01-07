@@ -31,7 +31,7 @@ def summary_this_year(activities, activity_type, field):
     return summary(this_year, activity_type, field)
 
 def distinct_active_days(activities):
-    return len(set([a['startTimeGMT'][0:10] for a in activities]))
+    return len(set([a['startTimeGMT'][0:10] for a in activities if a['startTimeGMT'].startswith('%d' % CURRENT_YEAR)]))
 
 def most_recent(activities, activity_type):
     return [a for a in sorted(activities, key=lambda x: x['activityId']) if a['activityType']['typeKey'] ==
