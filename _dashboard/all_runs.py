@@ -28,7 +28,7 @@ def svg_gpx(activity):
     image = Path("dist/_activities-svg/activity_%s.gpx.svg" % activity['activityId'])
     if image.is_file():
         return (distance, """
-            <img class="h-64" src="%s"/>
+            <div class="w-full flex justify-center"><img class="h-64" src="%s"/></div>
         """ % image)
     return (distance, "")
 
@@ -42,7 +42,7 @@ base_html = """
 </head>
 <body>
 
-    <h1 class="w-36 max-w-48 lg:w-48 bg-black text-white m-6 p-6 font-bold text-center">ALL-RUNS</h1>
+    <h1 class="w-36 max-w-48 lg:w-48 bg-black text-white m-6 p-6 font-bold text-center">Joglog</h1>
 
   ${groups}
 
@@ -62,17 +62,23 @@ base_html = """
 """
 
 group_html = """
-<div class="grid grid-cols-4 gap-4 p-10">
+
+<div class="container mx-auto">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
   ${components}
+  </div>
 </div>
 """
 
 component_html = """
-  <div class="relative">
-    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <span class="bg-black text-white p-4 opacity-75 border-white border-4">${distance}km ${time}min</span>
-    </div>
-    ${gpx}
+  <div class="flex justify-center p-2 mb-8 mt-8">
+        <div class="block w-full mx-auto">${gpx}
+            <div class="flex justify-between text-xs pt-2 border-t m-4">
+              <div>🏃 ${distance}&nbsp;km</div>
+              <div>⏱️  ${time}&nbsp;min</div>
+              <div>🔥 ${calories}&nbsp;kcal</div>
+            </div>
+        </div>
   </div>
 """
 
@@ -84,9 +90,10 @@ for activity in all_runs(activities):
 
     component = string.Template(component_html)
     (distance, gpx) = svg_gpx(activity)
+    calories = round(activity['calories'])
     duration = round(activity['duration'] / 60)
     components += component.substitute(gpx=gpx,
-            distance=distance, time=duration)
+            distance=distance, time=duration, calories=calories)
 
 groups = group_tpl.substitute(components=components)
 render = base.substitute(groups=groups)
