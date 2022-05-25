@@ -104,10 +104,9 @@ def svg_hr(activity):
 
     svg = """
     <svg class="w-full" viewBox="0 0 400 200">
-      <rect x="%s" width="%s" y="30" height="120" style="fill:rgb(237,249,255);stroke-width:0;" />
       <polyline fill="none" stroke="#000000" stroke-width="1" points="%s"/>
     </svg>
-    """ % (workout_x, workout_width, '\n'.join(beats))
+    """ % ('\n'.join(beats))
 
     return svg
 
@@ -202,11 +201,9 @@ base_html = """
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="dist/tailwind.css" rel="stylesheet">
+  <link href="https://mtod.org/_static/css/mvp.css?1653483456" rel="stylesheet">
 </head>
 <body>
-
-  <img class="w-36 max-w-48 lg:w-48 inline p-2 font-bold" src="dist/fig1.svg"/>
 
   ${groups}
 
@@ -214,9 +211,7 @@ base_html = """
     <p class="text-xs"><a href="https://github.com/aerosol/me"
     class="underline">Code</a> &amp; 
     data: <a class="underline" href="https://twitter.com/itshq1">hq1</a> 
-    | symbol: <a href="https://twitter.com/Biernacki" class="underline">Biernacki</a></p>
     <p class="text-xs">Made with: 
-    <a class="underline" href="https://tailwindcss.com/">tailwindcss</a> (MIT), 
     <a class="underline" href="https://gitlab.com/l3u/gpx2svg/">gpx2svg</a> (GPL3), 
     <a class="underline" href="https://github.com/cyberjunky/python-garminconnect">garminconnect</a> (MIT)</p>
   </footer>
@@ -243,7 +238,9 @@ component_html = """
                     <div class="flex flex-row items-stretch">
                         <div class="flex flex-col items-stretch">
                             <div class="text-gray-500 align-middle">
+                            <b>
                                 ${label}
+                            </b>
                             </div>
                             <div class="text-xl font-bold align-middle">
                                 ${value}
