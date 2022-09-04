@@ -1,0 +1,6 @@
+0 */2 * * *     /app/crontabs/run_daily_dump.sh >> /var/log/jobs.log
+30 */4 * * *    /app/crontabs/backfill_yesterday.sh >> /var/log/jobs.log
+0 * * * *       /app/crontabs/plot_heart.sh >> /var/log/jobs.log
+2 * * * *       /app/crontabs/plot_tracks.sh >> /var/log/jobs.log
+5 * * * *       /app/crontabs/generate_badge.sh >> /var/log/jobs.log
+
