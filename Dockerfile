@@ -8,6 +8,8 @@ RUN apk add --no-cache python3
 RUN apk add --no-cache py3-pip
 RUN apk add --no-cache bash
 RUN apk add --no-cache curl
+RUN apk add --no-cache gnuplot
+RUN apk add --no-cache jq
 RUN pip3 install garminconnect --upgrade
 
 COPY . /app
